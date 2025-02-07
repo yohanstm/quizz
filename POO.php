@@ -13,9 +13,10 @@ class Database {
     }
 
     private function connect() {
-        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname, $this->port);
-        if ($this->connection->connect_error) {
-            die("Erreur de connexion : " . $this->connection->connect_error);
+        try{
+            $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname, $this->port);
+        }catch (Exception $e){
+            die("Erreur de connexion : " . $e->getMessage());
         }
     }
 
@@ -28,16 +29,40 @@ class Database {
             $this->connection->close();
         }
     }
+
+    public function requete(){
+        $req = ("select * from Quizz;");
+        $result = $this->connection->query($req); // Exécution de la requête
+        return $result -> fetch_all(MYSQLI_ASSOC);;
+
+    }
+
+    public function getQuestions() {
+        // Récupérer toutes les questions et leurs catégories
+        $req = "
+            SELECT q.id, q.intitule AS question, c.nom AS categorie, q.difficulte
+            FROM Question q
+            JOIN Categorie c ON q.id_cat = c.id_cat;
+        ";
+        $result = $this->connection->query($req);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getReponses($question_id) {
+        // Récupérer toutes les réponses pour une question donnée
+        $req = "
+            SELECT r.intitule AS reponse, r.est_correct
+            FROM Reponses r
+            WHERE r.id_question = $question_id;
+        ";
+        $result = $this->connection->query($req);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getCategorie(){
+        $req = "select ";
+    }
 }
-
-
-// Utilisation de la classe Database
-$database = new Database();
-$conn = $database->getConnection();
-
-// Redirection vers la page d'accueil
-header("Location: page_test.php");
-exit();
 
 
 ?>

@@ -1,10 +1,24 @@
-<?php 
+<?php
+// Inclure la classe Database
+include('POO.php');
 
-// Utilisation de la classe Database
-$database = new Database();
-$conn = $database->getConnection();
+// Créer une instance de la classe Database
+$db = new Database();
 
-// Redirection vers la page d'accueil
-header("Location: page_test.php");
-exit();
+// Récupérer toutes les questions
+$questions = $db->getQuestions();
+
+// Afficher chaque question et ses réponses possibles
+foreach ($questions as $question) {
+    echo "<h3>" . $question['question'] . "</h3>";
+    echo "<p>Catégorie : " . $question['categorie'] . " | Difficulté : " . $question['difficulte'] . "</p>";
+
+    // Récupérer les réponses pour cette question
+    $reponses = $db->getReponses($question['id']);
+    
+    // Afficher chaque réponse
+    foreach ($reponses as $reponse) {
+        echo "<p>" . $reponse['reponse'] . " (" . ($reponse['est_correct'] ? "Correct" : "Incorrect") . ")</p>";
+    }
+}
 ?>
