@@ -1,27 +1,10 @@
 <?php 
 
-$password = 'P@ssw0rd';
-$username = 'user_quizz';
-$servername = '192.168.56.10';
-$dbname = 'QUIZZ';
-$port = 3306;
+// Utilisation de la classe Database
+$database = new Database();
+$conn = $database->getConnection();
 
-
-$mysqli = new mysqli($servername, $username, $password, $dbname, $port);
-
-
-if ($mysqli->connect_error) {
-    die("Erreur de connexion : " . $mysqli->connect_error);
-}
-
-
-// header("accueil.php");
-echo "Let's gooo, connexion réussie !";
-
-
-// $mysqli -> close();
-// echo "vous etes deconnecter";
-
-
-
+// Redirection vers la page d'accueil
+header("Location: page_test.php");
+exit();
 ?>

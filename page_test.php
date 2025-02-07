@@ -1,12 +1,9 @@
-<?php 
-
-echo "Hello !!"
-
-
-
+<?
+    echo"ttest"
 
 
 ?>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,6 +11,6 @@ echo "Hello !!"
     <title>Document</title>
 </head>
 <body>
-    <h1> Accueil du Quizz</h1>
+    <h1> page d'acceuil </h1>
 </body>
 </html>
