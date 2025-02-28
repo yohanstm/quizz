@@ -41,16 +41,27 @@ class Database {
 
     }
 
-    public function getQuestions() {
+    public function getQuestions($question_id) {
         // Récupérer toutes les questions et leurs catégories
-        $req = "
-            SELECT q.id, q.intitule AS question, c.nom AS categorie, q.difficulte
+
+        $questions = []; 
+        $req = $this -> connection -> prepare("
+            SELECT q.id, q.intitule AS question
             FROM Question q
-            JOIN Categorie c ON q.id_cat = c.id_cat;
-        ";
-        
-        $result = $this->connection->query($req);
-        return $result->fetch_all(MYSQLI_ASSOC);
+            where id = ? ;
+        ");
+        $req -> bind_param("i",$question_id );
+
+        $req -> execute();
+        $resultat = $req -> get_result();
+
+        $req -> close();
+
+        while($enregistrement = $resultat -> fetch_object()){
+            $questions[] = $enregistrement;
+        }
+
+        return $questions;
     }
 
     public function getReponses($question_id) {
@@ -79,9 +90,13 @@ class Database {
 
     public function getCategorie(){
 
-        $req = "select ";
+        $req = "
+            select id_cat, nom from Categorie;
+        ";
+        
+        $result = $this->connection->query($req);
+        return $result->fetch_all(MYSQLI_ASSOC);
+
     }
 }
-
-
 ?>
