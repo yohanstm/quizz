@@ -60,6 +60,7 @@ class Database {
     }
 
     public function getCategorie(){
+        
         $req = "select ";
     }
 }
