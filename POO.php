@@ -9,22 +9,26 @@ class Database {
     private $connection;
 
     public function __construct() {
-        $this->connect();
+        $this->connexion();
     }
 
-    private function connect() {
-        try{
-            $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname, $this->port);
-        }catch (Exception $e){
-            die("Erreur de connexion : " . $e->getMessage());
+    public function connexion() {
+        $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname, $this->port);
+    
+        // Vérifier si la connexion a échoué
+        if ($this->connection->connect_error) {
+            die(" Erreur de connexion : " . $this->connection->connect_error);
         }
+    
+        return $this->connection;
     }
+    
 
     public function getConnection() {
         return $this->connection;
     }
 
-    public function closeConnection() {
+    public function deconnexion() {
         if ($this->connection) {
             $this->connection->close();
         }
@@ -44,23 +48,37 @@ class Database {
             FROM Question q
             JOIN Categorie c ON q.id_cat = c.id_cat;
         ";
+        
         $result = $this->connection->query($req);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getReponses($question_id) {
-        // Récupérer toutes les réponses pour une question donnée
-        $req = "
-            SELECT r.intitule AS reponse, r.est_correct
-            FROM Reponses r
-            WHERE r.id_question = $question_id;
-        ";
-        $result = $this->connection->query($req);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+        $reponses = [];	//Servira a stocker la liste des reponses
+
+		/* On crée la requete SQL et on lie les paramètres */
+		$requete = $this -> connection-> prepare("SELECT r.id_reponse, r.intitule FROM Reponses r WHERE id_question=?");
+		$requete -> bind_param('i', $question_id);
+		
+		/* On execute la requete et on récupère le résultat */
+		$requete -> execute();
+		$resultat = $requete -> get_result();
+		
+		/* On libère la requête */
+		$requete -> close();
+		
+		
+		/* On parcours les résultats pour les stocker */
+		while ($enregistrement = $resultat -> fetch_object()) {
+			$reponses[] = $enregistrement;	//On ajoute un element avec un l'id et l'intitule à la suite de nos réponses
+		}
+		
+	
+		return $reponses;		//On retourne les réponses de la question
+	}
 
     public function getCategorie(){
-        
+
         $req = "select ";
     }
 }
