@@ -41,24 +41,25 @@ class Database {
 
     }
 
-    public function getQuestions($question_id) {
+    public function getQuestions($question_id,$cat) {
         // Récupérer toutes les questions et leurs catégories
 
         $questions = []; 
         $req = $this -> connection -> prepare("
             SELECT q.id, q.intitule AS question
             FROM Question q
-            where id = ? ;
+            INNER JOIN Categorie on Categorie.id_cat = q.id_cat
+            where q.id = ? and Categorie.id_cat =?;
         ");
-        $req -> bind_param("i",$question_id );
+        $req -> bind_param("ii",$question_id, $cat);
 
         $req -> execute();
         $resultat = $req -> get_result();
 
         $req -> close();
 
-        while($enregistrement = $resultat -> fetch_object()){
-            $questions[] = $enregistrement;
+        if($enregistrement = $resultat -> fetch_object()){
+            $questions = $enregistrement;
         }
 
         return $questions;
