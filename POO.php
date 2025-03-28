@@ -41,7 +41,7 @@ class Database {
 
     }
 
-    public function getQuestions($question_id,$cat) {
+    public function getQuestions($cat) {
         // Récupérer toutes les questions et leurs catégories
 
         $questions = []; 
@@ -49,44 +49,47 @@ class Database {
             SELECT q.id, q.intitule AS question
             FROM Question q
             INNER JOIN Categorie on Categorie.id_cat = q.id_cat
-            where q.id = ? and Categorie.id_cat =?;
+            where Categorie.id_cat =?;
         ");
-        $req -> bind_param("ii",$question_id, $cat);
+        $req -> bind_param("i", $cat);
 
         $req -> execute();
         $resultat = $req -> get_result();
 
         $req -> close();
+        
+        echo "nombre de question trouvés :" . $resultat -> num_rows. "<br>";
+
 
         if($enregistrement = $resultat -> fetch_object()){
-            $questions = $enregistrement;
+            $questions[] = $enregistrement;
         }
 
         return $questions;
     }
 
     public function getReponses($question_id) {
-        $reponses = [];	//Servira a stocker la liste des reponses
+        $reponses = [];	
 
-		/* On crée la requete SQL et on lie les paramètres */
+	
 		$requete = $this -> connection-> prepare("SELECT r.id_reponse, r.intitule FROM Reponses r WHERE id_question=?");
 		$requete -> bind_param('i', $question_id);
 		
-		/* On execute la requete et on récupère le résultat */
+
 		$requete -> execute();
 		$resultat = $requete -> get_result();
 		
-		/* On libère la requête */
+
 		$requete -> close();
 		
 		
-		/* On parcours les résultats pour les stocker */
+
 		while ($enregistrement = $resultat -> fetch_object()) {
-			$reponses[] = $enregistrement;	//On ajoute un element avec un l'id et l'intitule à la suite de nos réponses
+			$reponses[] = $enregistrement;	
 		}
 		
 	
-		return $reponses;		//On retourne les réponses de la question
+		return $reponses;		
 	}
 
     public function getCategorie(){
@@ -98,6 +101,14 @@ class Database {
         $result = $this->connection->query($req);
         return $result->fetch_all(MYSQLI_ASSOC);
 
+    }
+
+
+    public function getIdCategorie(){
+        $req =' select id_cat from Categorie;';
+
+        $result = $this->connection->query($req);
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
 ?>

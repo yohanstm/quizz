@@ -5,8 +5,11 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>#TITRE_QUESTION#</h1>
+    <h1>#TITRE_QUESTION</h1>
+
+    <p> #CATEGORIE_SELECTIONNER</p>
     <form method="POST " action="index.php?page=3">
+        <input type="hidden" name="categorie" value="#CATEGORIE_SELECTIONNER">
         <ul>
             #Question
         </ul>
